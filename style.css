@@ -28,7 +28,7 @@
 }
 
 body {
-  margin: 1rem;
+  margin: 2rem;
   background-color: var(--base-color);
   color: var(--text-color);
 }
@@ -37,7 +37,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  margin-bottom: 1rem;
 }
 
 .add-button {
@@ -67,8 +67,8 @@ header {
   margin-left: 1rem;
 }
 
-.theme-toggle:hover{
-    background: var(--text-color);
+.theme-toggle:hover {
+  background: var(--text-color);
 }
 
 .notes-container {
@@ -132,9 +132,9 @@ header {
   transform: scale(1.02);
 }
 
-.delete-button:hover{
-    background-color: #ff5252;
-    color: white;
+.delete-button:hover {
+  background-color: #ff5252;
+  color: white;
 }
 
 .note-content {
