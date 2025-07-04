@@ -46,8 +46,8 @@ renderNotes = () => {
     if(notes.length !== 0){
         document.getElementById('notesContainer').innerHTML = notes.map(note => `
         <div class="note-card">
-            <h3 class="note-title"> ${note.title} </h3>
-            <p class = "notes-content"> ${note.content} </p>
+            <h3 class="note-title">${note.title}</h3>
+            <p class = "note-content">${note.content}</p>
             <div class="note-actions">
             <button class="edit-button" onclick="openNoteDialog('${note.id}')" title = "Edit Button"><i class='bxr bx-pencil'></i></button>
             <button class="delete-button" title = "Delete Note" onclick ="deleteNote('${note.id}')"><i class='bxr bx-trash'></i></button>

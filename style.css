@@ -81,6 +81,11 @@ header {
   background-color: var(--surface-color);
   border-radius: 0.5rem;
   padding: 1.5rem;
+  height: 15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
   border: 1px solid var(--surface-color);
   position: relative;
   transition: all 0.2s ease;
@@ -138,13 +143,15 @@ header {
 }
 
 .note-content {
-  font-size: 1.25rem;
+  font-size: 1rem;
   line-height: 1.6;
-  margin-bottom: 1rem;
   word-wrap: break-word;
   white-space: pre-wrap;
-  margin-bottom: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: auto;
 }
+
 
 dialog {
   margin: auto;
