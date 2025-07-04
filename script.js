@@ -70,7 +70,7 @@ renderNotes = () => {
         </div>
         `).join('')
     } else {
-        document.getElementById('notesContainer').innerHTML = `<p style="font-size: 0.85rem; opacity: 0.6;">Press <kbd>N</kbd> to add a new note</p>
+        document.getElementById('notesContainer').innerHTML = `<p style="font-size: 0.85rem; opacity: 0.6;">Press <kbd>N</kbd> to add a new note.</p>
 `
     }
 }
