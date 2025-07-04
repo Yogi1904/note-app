@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Notes</title>
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+  </head>
+  <body>
+    <header>
+      <h1>Quick Notes</h1>
+      <div class="">
+        <button class="add-button" onclick="openNoteDialog()">
+          + Add Note
+        </button>
+        <button id="themeToggle" class="theme-toggle">🌙</button>
+      </div>
+    </header>
+
+    <main id="notesContainer" class="notes-container"></main>
+
+    <!-- Dialog box to add notes -->
+    <dialog id="addNoteDialog">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h2 id="dialogTitle" class="dialog-title"></h2>
+          <button class="close-button" onclick="closeNoteDialog()"><i class='bxr bx-x-square'></i> </button>
+        </div>
+
+        <form id="noteForm">
+          <div class="form-entry">
+            <label for="noteTitle" class="form-label">Add Title</label>
+            <input
+              type="text"
+              placeholder="Enter note title"
+              id="noteTitle"
+              class="form-input"
+              required
+            />
+          </div>
+          <div class="form-entry">
+            <label for="noteContent" class="form-label">Add Content</label>
+            <textarea
+              placeholder="Enter note content"
+              id="noteContent"
+              class="form-input"
+            ></textarea>
+          </div>
+          <div class="dialog-actions">
+          <button
+            type="button"
+            id="cancelButton"
+            class="cancel-button"
+            onclick="closeNoteDialog()"
+          >Cancel</button>
+          <button type = "submit" class="submit-button">Save Note</button>
+        </div>
+      </div>
+        </form>
+    </dialog>
+    <script src="script.js"></script>
+  </body>
+</html>
