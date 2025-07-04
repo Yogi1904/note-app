@@ -36,7 +36,7 @@
               type="text"
               placeholder="Enter note title"
               id="noteTitle"
-              class="form-input"
+              class="form-title-input"
               required
             />
           </div>
@@ -45,7 +45,7 @@
             <textarea
               placeholder="Enter note content"
               id="noteContent"
-              class="form-input"
+              class="form-content-input"
             ></textarea>
           </div>
           <div class="dialog-actions">
@@ -60,6 +60,17 @@
       </div>
         </form>
     </dialog>
+
+    <!-- Dialog box to read notes -->
+    <dialog id="readNoteBox">
+        <div class="note-title-box" id="noteTitleBox"></div>
+        <button class="minimise-button" onclick="minimiseNote()" title="Close">
+          <i class='bxr bx-fullscreen-exit bx-rotate-180'></i> 
+        </button>
+      </div>
+      <div class="note-content-box" id="noteContentBox"></div>
+    </dialog>
+
     <script src="script.js"></script>
   </body>
 </html>

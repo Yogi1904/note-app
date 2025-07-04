@@ -13,6 +13,7 @@
   --surface-color: #2a2d33;
   --text-color: #eff6ee;
   --secondary-text-color: #9197ae;
+  --toggle-bg: #5c5f66;
   --base-transparent-90: rgba(28, 31, 34, 0.9);
   --base-transparent-100: rgba(28, 31, 34, 1);
 }
@@ -23,6 +24,7 @@
   --surface-color: #ffffff;
   --text-color: #273043;
   --secondary-text-color: #9197ae;
+  --toggle-bg: #c5c7cc;
   --base-transparent-90: rgba(239, 246, 238, 0.9);
   --base-transparent-100: rgba(239, 246, 238, 1);
 }
@@ -68,7 +70,7 @@ header {
 }
 
 .theme-toggle:hover {
-  background: var(--text-color);
+  background: var(--toggle-bg);
 }
 
 .notes-container {
@@ -95,7 +97,7 @@ header {
   transform: scale(1.02);
 }
 
-.note-title {
+.note-title, .note-title-box {
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
@@ -104,6 +106,7 @@ header {
 
 .note-actions {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
   opacity: 0;
   visibility: hidden;
@@ -119,7 +122,8 @@ header {
 }
 
 .edit-button,
-.delete-button {
+.delete-button,
+.full-screen-button, .minimise-button {
   border: none;
   border: 1px solid var(--surface-color);
   border-radius: 0.3rem;
@@ -132,7 +136,7 @@ header {
   transition: all 0.2s ease;
 }
 
-.edit-button:hover {
+.edit-button:hover, .full-screen-button:hover, .minimise-button:hover {
   background-color: var(--base-transparent-100);
   transform: scale(1.02);
 }
@@ -146,12 +150,12 @@ header {
   font-size: 1rem;
   line-height: 1.6;
   word-wrap: break-word;
+  word-break: break-word;
   white-space: pre-wrap;
   overflow: hidden;
   text-overflow: ellipsis;
   margin-bottom: auto;
 }
-
 
 dialog {
   margin: auto;
@@ -187,7 +191,7 @@ dialog {
   color: var(--text-color);
 }
 
-.form-input {
+.form-title-input, .form-content-input {
   width: 100%;
   padding: 0.2rem;
   border: none;
@@ -196,6 +200,11 @@ dialog {
   border-radius: 0.2rem;
   background-color: var(--base-color);
   font-size: 1rem;
+}
+
+.form-content-input{
+  height: 10rem;
+  resize: none;
 }
 
 .dialog-actions {
@@ -233,4 +242,15 @@ dialog {
 .submit-button {
   background-color: var(--brand-color);
   color: white;
+}
+
+#readNoteBox{
+  padding: 2rem;
+  max-width: 800px;
+}
+
+.minimise-button{
+  position: absolute;
+  top: 2.5rem;
+  right: 1rem;
 }

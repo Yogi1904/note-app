@@ -13,6 +13,20 @@ function generateId(){
     return Date.now().toString()
 }
 
+function displayNote(noteId){
+    const note = notes.find(note => note.id === noteId)
+    if(!noteId) return
+
+    document.getElementById("noteTitleBox").innerHTML = note.title
+    document.getElementById("noteContentBox").innerHTML = note.content
+
+    document.getElementById('readNoteBox').showModal()
+}
+
+function minimiseNote(){
+    document.getElementById('readNoteBox').close()
+}
+
 function saveNote(event){
     event.preventDefault();
 
@@ -50,6 +64,7 @@ renderNotes = () => {
             <p class = "note-content">${note.content}</p>
             <div class="note-actions">
             <button class="edit-button" onclick="openNoteDialog('${note.id}')" title = "Edit Button"><i class='bxr bx-pencil'></i></button>
+            <button class="full-screen-button" title = "Show Note" onclick ="displayNote('${note.id}')"><i class='bxr bx-fullscreen'></i></button>
             <button class="delete-button" title = "Delete Note" onclick ="deleteNote('${note.id}')"><i class='bxr bx-trash'></i></button>
             </div>
         </div>
@@ -93,11 +108,26 @@ deleteNote = (noteId) =>{
 }
 
 themeToggle = () =>{
-    document.body.classList.toggle('light-theme')
+    const isLight = document.body.classList.toggle('light-theme')
+    localStorage.setItem('theme', isLight? 'light' : 'dark')
+    document.getElementById("themeToggle").innerHTML = isLight? "☀️" : "🌙"
+}
+
+applyTheme = () =>{
+    const theme = localStorage.getItem('theme')
+    if(theme === 'light'){
+        document.body.classList.add('light-theme')
+        document.getElementById("themeToggle").innerHTML = "☀️"
+    }
+    else{
+        document.body.classList.remove('light-theme')
+        document.getElementById("themeToggle").innerHTML = "🌙"
+    }
 }
 
 // Ensures that the JS functions work only when the entire contents are loaded. Otherwise can throw errors.
 document.addEventListener('DOMContentLoaded', () => {
+    applyTheme()
     notes = loadNotes()
     renderNotes()
     form.addEventListener('submit', saveNote)
@@ -105,6 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
     dialog.addEventListener('click', event => {
         if(event.target == dialog){
             closeNoteDialog()
+        }
+    })
+
+    document.getElementById('readNoteBox').addEventListener('click', event =>{
+        if(event.target == document.getElementById('readNoteBox')){
+            document.getElementById('readNoteBox').close()
         }
     })
 
