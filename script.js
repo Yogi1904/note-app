@@ -70,7 +70,8 @@ renderNotes = () => {
         </div>
         `).join('')
     } else {
-        document.getElementById('notesContainer').innerHTML = `Add a new note! `
+        document.getElementById('notesContainer').innerHTML = `<p style="font-size: 0.85rem; opacity: 0.6;">Press <kbd>N</kbd> to add a new note</p>
+`
     }
 }
 
@@ -155,6 +156,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault()
             saveNote(event)
+        }
+    })
+
+    document.addEventListener('keydown', event =>{
+        if (event.key.toLowerCase() === 'n'){
+            event.preventDefault()
+            openNoteDialog()
         }
     })
 

@@ -169,6 +169,11 @@ dialog {
   /* padding: 1rem; */
 }
 
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.4); /* semi-transparent dark overlay */
+  backdrop-filter: blur(1rem);           /* the actual blur effect */
+}
+
 .dialog-content {
   padding: 2rem;
 }
@@ -247,6 +252,16 @@ dialog {
 #readNoteBox{
   padding: 2rem;
   max-width: 800px;
+}
+
+.note-content-box {
+  font-size: 1rem;
+  line-height: 1.6;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
+  text-overflow: ellipsis;
+  margin-bottom: auto;
 }
 
 .minimise-button{
