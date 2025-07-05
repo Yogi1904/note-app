@@ -34,10 +34,12 @@ function displayNote(noteId){
 
     document.getElementById('readNoteBox').showModal()
 }
+window.displayNote = displayNote
 
 function minimiseNote(){
     document.getElementById('readNoteBox').close()
 }
+window.minimiseNote = minimiseNote
 
 function saveNote(event){
     event.preventDefault();
@@ -108,10 +110,12 @@ function openNoteDialog(noteId = null){
     }
     dialog.showModal()
 }
+window.openNoteDialog = openNoteDialog
 
 function closeNoteDialog(){
     dialog.close();
 }
+window.closeNoteDialog = closeNoteDialog
 
 function deleteNote(noteId){
     notes = notes.filter(note => note.id != noteId)
@@ -119,6 +123,7 @@ function deleteNote(noteId){
     saveNotes()
     renderNotes()
 }
+window.deleteNote = deleteNote
 
 function themeToggle(){
     const isLight = document.body.classList.toggle('light-theme')
