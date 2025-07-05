@@ -128,18 +128,18 @@ window.deleteNote = deleteNote
 function themeToggle(){
     const isLight = document.body.classList.toggle('light-theme')
     localStorage.setItem('theme', isLight? 'light' : 'dark')
-    document.getElementById("themeToggle").innerHTML = isLight? "☀️" : "🌙"
+    document.getElementById("themeToggle").innerHTML = isLight? "<i class='bxr  bx-sun-bright'  ></i> " : "<i class='bxr  bx-moon bx-rotate-270'  ></i> "
 }
 
 function applyTheme(){
     const theme = localStorage.getItem('theme')
     if(theme === 'light'){
         document.body.classList.add('light-theme')
-        document.getElementById("themeToggle").innerHTML = "☀️"
+        document.getElementById("themeToggle").innerHTML = "<i class='bxr  bx-sun-bright'  ></i> "
     }
     else{
         document.body.classList.remove('light-theme')
-        document.getElementById("themeToggle").innerHTML = "🌙"
+        document.getElementById("themeToggle").innerHTML = "<i class='bxr  bx-moon bx-rotate-270'  ></i> "
     }
 }
 

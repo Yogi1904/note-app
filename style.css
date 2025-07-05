@@ -14,6 +14,7 @@
   --text-color: #eff6ee;
   --secondary-text-color: #9197ae;
   --toggle-bg: #5c5f66;
+  --toggle-icon-color: #eff6ee;
   --base-transparent-90: rgba(28, 31, 34, 0.9);
   --base-transparent-100: rgba(28, 31, 34, 1);
 }
@@ -24,7 +25,8 @@
   --surface-color: #ffffff;
   --text-color: #273043;
   --secondary-text-color: #9197ae;
-  --toggle-bg: #c5c7cc;
+  --toggle-bg: rgb(250, 250, 165);
+  --toggle-icon-color: orange;
   --base-transparent-90: rgba(239, 246, 238, 0.9);
   --base-transparent-100: rgba(239, 246, 238, 1);
 }
@@ -59,19 +61,23 @@ header {
 
 .theme-toggle {
   background: var(--surface-color);
-  color: var(--text-color);
+  color: var(--toggle-icon-color);
   border: 1px solid var(--surface-color);
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 0.5rem 0 0.5rem;
   border-radius: 0.5rem;
   cursor: pointer;
+  font-size: 1.5rem;
   font-weight: 500;
   transition: all 0.2s ease;
-  margin-left: 1rem;
+  /* margin-left: 1rem;
+  margin-top: 0.5rem; */
 }
 
 .theme-toggle:hover {
   background: var(--toggle-bg);
 }
+
+
 
 .notes-container {
   display: grid;
