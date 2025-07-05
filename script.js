@@ -1,3 +1,15 @@
+import { db } from "./firebase-config.js";
+import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Testing if database is configured
+// async function testFirebase() {
+//     const docRef = addDoc(collection(db, "test"), {
+//         message: "Data Recieved",
+//         timestamp: Date.now()
+//     });
+//     console.log(docRef.id)
+// }
+
 const dialog = document.getElementById('addNoteDialog')
 const form = document.getElementById('noteForm')
 
@@ -50,13 +62,13 @@ function saveNote(event){
     dialog.close()
 }
 
-saveNotes = () =>{
+function saveNotes() {
     localStorage.setItem('notes', JSON.stringify(notes))
     document.getElementById('noteTitle').value = ""
     document.getElementById('noteContent').value = ""
 }
 
-renderNotes = () => {
+function renderNotes(){
     if(notes.length !== 0){
         document.getElementById('notesContainer').innerHTML = notes.map(note => `
         <div class="note-card">
@@ -76,7 +88,7 @@ renderNotes = () => {
 }
 
 //Opening and closing the dialog
-openNoteDialog = (noteId = null) =>{
+function openNoteDialog(noteId = null){
 
     //if note id exists
     if(!noteId){
@@ -97,24 +109,24 @@ openNoteDialog = (noteId = null) =>{
     dialog.showModal()
 }
 
-closeNoteDialog = () =>{
+function closeNoteDialog(){
     dialog.close();
 }
 
-deleteNote = (noteId) =>{
+function deleteNote(noteId){
     notes = notes.filter(note => note.id != noteId)
     console.log("note deleted.")
     saveNotes()
     renderNotes()
 }
 
-themeToggle = () =>{
+function themeToggle(){
     const isLight = document.body.classList.toggle('light-theme')
     localStorage.setItem('theme', isLight? 'light' : 'dark')
     document.getElementById("themeToggle").innerHTML = isLight? "☀️" : "🌙"
 }
 
-applyTheme = () =>{
+function applyTheme(){
     const theme = localStorage.getItem('theme')
     if(theme === 'light'){
         document.body.classList.add('light-theme')
@@ -128,9 +140,12 @@ applyTheme = () =>{
 
 // Ensures that the JS functions work only when the entire contents are loaded. Otherwise can throw errors.
 document.addEventListener('DOMContentLoaded', () => {
+    // testFirebase()
+
     applyTheme()
     notes = loadNotes()
     renderNotes()
+    
     form.addEventListener('submit', saveNote)
 
     dialog.addEventListener('click', event => {
