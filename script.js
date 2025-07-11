@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     document.addEventListener('keydown', event =>{
-        if (event.key.toLowerCase() === 'n' && event.ctrlKey){
+        if (event.key.toLowerCase() === 'n' && event.shiftKey){
             event.preventDefault()
             openNoteDialog()
         }
