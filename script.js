@@ -143,6 +143,10 @@ function applyTheme(){
     }
 }
 
+function isPhone(){
+    return (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || ('ontouchstart' in window && navigator.maxTouchPoints > 0));
+}
+
 // Ensures that the JS functions work only when the entire contents are loaded. Otherwise can throw errors.
 document.addEventListener('DOMContentLoaded', () => {
     // testFirebase()
@@ -166,6 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     document.getElementById('noteTitle').addEventListener('keydown', event => {
+        if(isPhone()){
+            return;
+        }
+
         if (event.key === 'Enter') {
             event.preventDefault()
             saveNote(event)
@@ -173,6 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     document.getElementById('noteContent').addEventListener('keydown', event => {
+        if(isPhone()){
+            return;
+        }
+
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault()
             saveNote(event)
