@@ -75,6 +75,7 @@ header {
 
 .theme-toggle:hover {
   background: var(--toggle-bg);
+  border-color: var(--toggle-bg);
 }
 
 
