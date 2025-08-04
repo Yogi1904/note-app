@@ -84,7 +84,7 @@ function renderNotes(){
         </div>
         `).join('')
     } else {
-        document.getElementById('notesContainer').innerHTML = `<p style="font-size: 0.85rem; opacity: 0.6;">Press <kbd>N</kbd> to add a new note.</p>
+        document.getElementById('notesContainer').innerHTML = `<p style="font-size: 0.85rem; opacity: 0.6;">Press <kbd>Alt + N</kbd> to add a new note.</p>
 `
     }
 }
@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     document.addEventListener('keydown', event =>{
-        if (event.key.toLowerCase() === 'n' && event.shiftKey){
+        if (event.key.toLowerCase() === 'n' && event.altKey){
             event.preventDefault()
             openNoteDialog()
         }
