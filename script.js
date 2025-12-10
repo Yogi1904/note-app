@@ -1,202 +1,230 @@
-import { db } from "./firebase-config.js";
-import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Testing if database is configured
-// async function testFirebase() {
-//     const docRef = addDoc(collection(db, "test"), {
-//         message: "Data Recieved",
-//         timestamp: Date.now()
-//     });
-//     console.log(docRef.id)
-// }
+import {db} from './firebase-config.js';
+import {collection, addDoc, getDocs, doc, setDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-const dialog = document.getElementById('addNoteDialog')
-const form = document.getElementById('noteForm')
+// Optional: helps debug
+console.log("Firestore db object:", db);
+
+const notesColRef = collection(db, "notes");
+
+const dialog = document.getElementById("addNoteDialog");
+const form = document.getElementById("noteForm");
 
 let editingdId = null;
+let notes = [];
 
-let notes = []
+async function loadNotes(){
+  const q = query(notesColRef, orderBy("createdAt", "desc"));
+  const snapshot = await getDocs(q);
 
-function loadNotes(){
-    return JSON.parse(localStorage.getItem('notes')) || []
-}
-
-function generateId(){
-    return Date.now().toString()
+  return snapshot.docs.map(d => ({
+    id: d.id,
+    title: d.data().title || "",
+    content: d.data().content || ""
+  }));
 }
 
 function displayNote(noteId){
-    const note = notes.find(note => note.id === noteId)
-    if(!noteId) return
+  const note =notes.find(note => note.id ===noteId);
+  if (!note) return;
 
-    document.getElementById("noteTitleBox").innerHTML = note.title
-    document.getElementById("noteContentBox").innerHTML = note.content
+  document.getElementById("noteTitleBox").innerHTML = note.title;
+  document.getElementById("noteContentBox").innerHTML = note.content;
 
-    document.getElementById('readNoteBox').showModal()
+  document.getElementById("readNoteBox").showModal();
 }
-window.displayNote = displayNote
+window.displayNote= displayNote;
 
 function minimiseNote(){
-    document.getElementById('readNoteBox').close()
+  document.getElementById("readNoteBox").close();
 }
-window.minimiseNote = minimiseNote
+window.minimiseNote = minimiseNote;
 
-function saveNote(event){
-    event.preventDefault();
+async function saveNote(event){
+  event.preventDefault();
 
-    const title = document.getElementById('noteTitle').value.trim()
-    const content = document.getElementById('noteContent').value.trim()
-    if(!editingdId){
-        notes.unshift({
-            id: generateId(),
-            title:title,
-            content:content
-        })
-    } else {
-        const note = notes.find(note => note.id == editingdId)
-        note.title = title
-        note.content = content
+  const titleInput = document.getElementById("noteTitle");
+  const contentInput = document.getElementById("noteContent");
+
+  const title = titleInput.value.trim();
+  const content = contentInput.value.trim();
+  if (!title && !content) return;
+
+  if (!editingdId){
+    const docRef = await addDoc(notesColRef, {title, content, createdAt: serverTimestamp()});
+
+    notes.unshift({id: docRef.id, title, content});
+  } else {
+    const noteRef = doc(db, "notes", editingdId);
+    await setDoc(noteRef, {title, content, updatedAt: serverTimestamp()}, {merge: true});
+
+    const note = notes.find(n => n.id === editingdId);
+    if (note){
+      note.title = title;
+      note.content = content;
     }
-    saveNotes()
+  }
 
-    renderNotes()
-
-    dialog.close()
+  clearNoteForm();
+  await reloadAndRenderNotes();
+  dialog.close();
 }
 
-function saveNotes() {
-    localStorage.setItem('notes', JSON.stringify(notes))
-    document.getElementById('noteTitle').value = ""
-    document.getElementById('noteContent').value = ""
+function clearNoteForm(){
+  document.getElementById("noteTitle").value = "";
+  document.getElementById("noteContent").value = "";
 }
 
 function renderNotes(){
-    if(notes.length !== 0){
-        document.getElementById('notesContainer').innerHTML = notes.map(note => `
-        <div class="note-card">
-            <h3 class="note-title">${note.title}</h3>
-            <p class = "note-content">${note.content}</p>
-            <div class="note-actions">
-            <button class="edit-button" onclick="openNoteDialog('${note.id}')" title = "Edit Button"><i class='bxr bx-pencil'></i></button>
-            <button class="full-screen-button" title = "Show Note" onclick ="displayNote('${note.id}')"><i class='bxr bx-fullscreen'></i></button>
-            <button class="delete-button" title = "Delete Note" onclick ="deleteNote('${note.id}')"><i class='bxr bx-trash'></i></button>
-            </div>
+  const container = document.getElementById("notesContainer");
+
+  if (notes.length !== 0){
+    container.innerHTML = notes.map(
+        note => `
+      <div class="note-card">
+        <h3 class="note-title">${note.title}</h3>
+        <p class="note-content">${note.content}</p>
+        <div class="note-actions">
+          <button class="edit-button" onclick="openNoteDialog('${note.id}')" title="Edit Button">
+            <i class='bxr bx-pencil'></i>
+          </button>
+          <button class="full-screen-button" title="Show Note" onclick="displayNote('${note.id}')">
+            <i class='bxr bx-fullscreen'></i>
+          </button>
+          <button class="delete-button" title="Delete Note" onclick="deleteNote('${note.id}')">
+            <i class='bxr bx-trash'></i>
+          </button>
         </div>
-        `).join('')
-    } else {
-        document.getElementById('notesContainer').innerHTML = `<p style="font-size: 0.85rem; opacity: 0.6;">Press <kbd>Alt + N</kbd> to add a new note.</p>
-`
-    }
+      </div>
+    `
+      )
+      .join("");
+  } else {
+    container.innerHTML = `
+      <p style="font-size: 0.85rem; opacity: 0.6;">
+        Press <kbd>Alt + N</kbd> to add a new note.
+      </p>
+    `;
+  }
 }
 
-//Opening and closing the dialog
+async function reloadAndRenderNotes(){
+  notes = await loadNotes();
+  renderNotes();
+}
+
 function openNoteDialog(noteId = null){
+  const titleInput = document.getElementById("noteTitle");
+  const contentInput = document.getElementById("noteContent");
+  const dialogTitle = document.getElementById("dialogTitle");
 
-    //if note id exists
-    if(!noteId){
-        editingdId = null
-        document.getElementById('dialogTitle').innerHTML = `Add New Note`
-        noteTitle.value = ""
-        noteContent.value = ""
-    } 
-    
-    //if note id doesn't exist
-    else {
-        const noteToEdit = notes.find(note => note.id === noteId)
-        editingdId = noteId
-        document.getElementById('dialogTitle').innerHTML = `Edit Note`
-        noteTitle.value = noteToEdit.title
-        noteContent.value = noteToEdit.content
-    }
-    dialog.showModal()
+  if (!noteId){
+    editingdId = null;
+    dialogTitle.innerHTML = "Add New Note";
+    titleInput.value = "";
+    contentInput.value = "";
+  } else {
+    const noteToEdit = notes.find(note => note.id === noteId);
+    if (!noteToEdit) return;
+
+    editingdId = noteId;
+    dialogTitle.innerHTML = "Edit Note";
+    titleInput.value = noteToEdit.title;
+    contentInput.value = noteToEdit.content;
+  }
+
+  dialog.showModal();
 }
-window.openNoteDialog = openNoteDialog
+window.openNoteDialog = openNoteDialog;
 
 function closeNoteDialog(){
-    dialog.close();
+  dialog.close();
 }
-window.closeNoteDialog = closeNoteDialog
+window.closeNoteDialog = closeNoteDialog;
 
-function deleteNote(noteId){
-    notes = notes.filter(note => note.id != noteId)
-    console.log("note deleted.")
-    saveNotes()
-    renderNotes()
+async function deleteNote(noteId){
+  const noteRef = doc(db, "notes", noteId);
+  await deleteDoc(noteRef);
+
+  notes = notes.filter(note => note.id !== noteId);
+  console.log("note deleted.");
+
+  renderNotes();
 }
-window.deleteNote = deleteNote
+window.deleteNote = deleteNote;
 
 function themeToggle(){
-    const isLight = document.body.classList.toggle('light-theme')
-    localStorage.setItem('theme', isLight? 'light' : 'dark')
-    document.getElementById("themeToggle").innerHTML = isLight? "<i class='bxr  bx-sun-bright'  ></i> " : "<i class='bxr  bx-moon bx-rotate-270'  ></i> "
+  const isLight = document.body.classList.toggle("light-theme");
+  localStorage.setItem("theme", isLight ? "light" : "dark");
+  document.getElementById("themeToggle").innerHTML = isLight
+    ? "<i class='bxr  bx-sun-bright'></i>"
+    : "<i class='bxr  bx-moon bx-rotate-270'></i>";
 }
 
 function applyTheme(){
-    const theme = localStorage.getItem('theme')
-    if(theme === 'light'){
-        document.body.classList.add('light-theme')
-        document.getElementById("themeToggle").innerHTML = "<i class='bxr  bx-sun-bright'  ></i> "
-    }
-    else{
-        document.body.classList.remove('light-theme')
-        document.getElementById("themeToggle").innerHTML = "<i class='bxr  bx-moon bx-rotate-270'  ></i> "
-    }
+  const theme = localStorage.getItem("theme");
+  if (theme === "light"){
+    document.body.classList.add("light-theme");
+    document.getElementById("themeToggle").innerHTML =
+      "<i class='bxr  bx-sun-bright'></i>";
+  } else {
+    document.body.classList.remove("light-theme");
+    document.getElementById("themeToggle").innerHTML =
+      "<i class='bxr  bx-moon bx-rotate-270'></i>";
+  }
 }
 
 function isPhone(){
-    return (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || ('ontouchstart' in window && navigator.maxTouchPoints > 0));
+  return (
+    /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    ("ontouchstart" in window && navigator.maxTouchPoints > 0)
+  );
 }
 
-// Ensures that the JS functions work only when the entire contents are loaded. Otherwise can throw errors.
-document.addEventListener('DOMContentLoaded', () => {
-    // testFirebase()
+// Loading the DOM Content
+document.addEventListener("DOMContentLoaded", async () => {
+  applyTheme();
 
-    applyTheme()
-    notes = loadNotes()
-    renderNotes()
-    
-    form.addEventListener('submit', saveNote)
+  await reloadAndRenderNotes();
 
-    dialog.addEventListener('click', event => {
-        if(event.target == dialog){
-            closeNoteDialog()
-        }
-    })
+  form.addEventListener("submit", saveNote);
 
-    document.getElementById('readNoteBox').addEventListener('click', event =>{
-        if(event.target == document.getElementById('readNoteBox')){
-            document.getElementById('readNoteBox').close()
-        }
-    })
+  dialog.addEventListener("click", event => {
+    if (event.target === dialog){
+      closeNoteDialog();
+    }
+  });
 
-    document.getElementById('noteTitle').addEventListener('keydown', event => {
-        if(isPhone()){
-            return;
-        }
+  document.getElementById("readNoteBox").addEventListener("click", event => {
+    if (event.target === document.getElementById("readNoteBox")){
+      document.getElementById("readNoteBox").close();
+    }
+  });
 
-        if (event.key === 'Enter') {
-            event.preventDefault()
-            saveNote(event)
-        }
-    })
+  document.getElementById("noteTitle").addEventListener("keydown", event => {
+    if (isPhone()) return;
 
-    document.getElementById('noteContent').addEventListener('keydown', event => {
-        if(isPhone()){
-            return;
-        }
+    if (event.key === "Enter"){
+      event.preventDefault();
+      saveNote(event);
+    }
+  });
 
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault()
-            saveNote(event)
-        }
-    })
+  document.getElementById("noteContent").addEventListener("keydown", event => {
+    if (isPhone()) return;
 
-    document.addEventListener('keydown', event =>{
-        if (event.key.toLowerCase() === 'n' && event.altKey){
-            event.preventDefault()
-            openNoteDialog()
-        }
-    })
+    if (event.key === "Enter" && !event.shiftKey){
+      event.preventDefault();
+      saveNote(event);
+    }
+  });
 
-    document.getElementById('themeToggle').addEventListener('click', themeToggle)
-})
+  document.addEventListener("keydown", event => {
+    if (event.key.toLowerCase() === "n" && event.altKey){
+      event.preventDefault();
+      openNoteDialog();
+    }
+  });
+
+  document.getElementById("themeToggle").addEventListener("click", themeToggle);
+});
